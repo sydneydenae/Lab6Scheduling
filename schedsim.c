@@ -59,6 +59,26 @@ void findWaitingTimeRR(ProcessType plist[], int n,int quantum)
    }
 } 
 
+int findShortest(int rem_bt[], int n)
+{
+  if(sizeof(rem_bt) < 1){
+    return -1;
+  }
+  int shortestTime = INT_MAX;
+  int shortestTimeIdx = -1;
+
+  for(int i = 0; i<n; i ++){
+    if(rem_bt[i] == 0){
+      continue;
+    }
+    else if (rem_bt[i] < shortestTime){
+      shortestTime = rem_bt[i];
+      shortestTimeIdx = i;
+    }
+  }
+  return shortestTimeIdx;
+}
+
 // SHORTEST JOB FIRST WAITING TIME
 void findWaitingTimeSJF(ProcessType plist[], int n)
 { 
@@ -73,7 +93,32 @@ void findWaitingTimeSJF(ProcessType plist[], int n)
          - Increment time lap by one.
  
      */
+  // Initialize time.
+   int t = 0;
+   int completedCount = 0;
+  
+   // Create an array to store the remaining burst time of processes
+   // set each wait time to 0.
+   int rem_bt[n];
+   for(int i = 0; i<n; i++){
+    rem_bt[i] = plist[i].bt;
+    plist[i].wt = 0;
+   }
+    while(completedCount < n){
+      int idx = findShortest(rem_bt, n);
+      if (idx == -1){
+        return;
+      }
+      //increase time
+      t += 1;
+      rem_bt[idx] -= 1; 
+      // if process finished.
+      if(rem_bt[idx] == 0){
+        plist[idx].wt = t - plist[idx].bt;
+      }
+    }
 } 
+
 
 // Function to find the waiting time for FCFS
 void findWaitingTime(ProcessType plist[], int n)
