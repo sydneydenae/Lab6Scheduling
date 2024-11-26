@@ -142,13 +142,18 @@ void findTurnAroundTime( ProcessType plist[], int n)
 // Function to sort the Process acc. to priority
 int my_comparer(const void *this, const void *that)
 { 
-  
     /*  
      * 1. Cast this and that into (ProcessType *)
      * 2. return 1 if this->pri < that->pri
      */ 
-  
-    return 1;
+    ProcessType *p1 = (ProcessType *)this;
+    ProcessType *p2 = (ProcessType *)that;
+
+    if (p1->pri != p2->pri){
+    // positive means swap
+    return p2->pri - p1->pri;
+  }
+  return p2->bt - p1->bt;
 } 
 
 // FIRST COME FIRST SERVED AVERAGE TIME
@@ -195,11 +200,14 @@ void findavgTimeRR( ProcessType plist[], int n, int quantum)
 // PRIORITY AVERAGE TIME 
 void findavgTimePriority( ProcessType plist[], int n) 
 { 
-  
    /*
     * 1- Sort the processes (i.e. plist[]), burst time and priority according to the priority.
     * 2- Now simply apply FCFS algorithm.
     */
+
+    qsort(plist, n, sizeof(ProcessType), my_comparer);
+    findWaitingTime(plist, n);
+    findTurnAroundTime(plist, n);
   
     //Display processes along with all details 
     printf("\n*********\nPriority\n");
